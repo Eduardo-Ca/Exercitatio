@@ -37,11 +37,6 @@ class _AdicionarTreinoTelaState extends State<AdicionarTreinoTela> {
   }
 
   @override
-  void didChangeDependencies() {
-    super.didChangeDependencies();
-  }
-
-  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(

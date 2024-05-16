@@ -17,6 +17,7 @@ dependencies:
   sqflite: 2.2.7
   path: ^1.8.2
   image_picker: ^0.8.4+3
+  mockito: ^5.0.15
 
 
 dev_dependencies:
