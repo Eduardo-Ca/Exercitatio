@@ -32,6 +32,7 @@ class _HomeTelaState extends State<HomeTela> {
     diaSemana = trazerDiaSemana(diaSelecionado);
     try {
       treinos = await _dbHelper.listarTreinosPorDia(diaSemana);
+      setState(() {});
     } catch (e) {
       const snackBar = SnackBar(
         content: Text("Algo deu errado!"),
@@ -117,13 +118,38 @@ class _HomeTelaState extends State<HomeTela> {
           return Dismissible(
             key: Key(treino.id.toString()),
             onDismissed: (direction) {
-              _dbHelper.deletarTreino(treino.id!);
+              setState(() {
+                treinos.removeAt(index);
+              });
+
+              if (direction == DismissDirection.endToStart) {
+                _dbHelper.deletarTreino(treino.id!);
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Treino deletado')),
+                );
+              } else if (direction == DismissDirection.startToEnd) {
+                // Lógica para editar o treino
+                Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => AdicionarTreinoTela(
+                              diaSemana: diaSemana,
+                              treino: treino,
+                              edicao: true,
+                            )));
+              }
             },
             background: Container(
+              color: Colors.green,
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.only(left: 16.0),
+              child: const Icon(Icons.edit, color: Colors.white),
+            ),
+            secondaryBackground: Container(
               color: Colors.red,
-              child: const Center(
-                child: Icon(Icons.delete, color: Colors.white),
-              ),
+              alignment: Alignment.centerRight,
+              padding: const EdgeInsets.only(right: 16.0),
+              child: const Icon(Icons.delete, color: Colors.white),
             ),
             child: HomeExercicioCard(
               peso: treino.peso,

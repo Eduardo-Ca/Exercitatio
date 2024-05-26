@@ -12,7 +12,14 @@ import '../../../core/data/database.dart';
 
 class AdicionarTreinoTela extends StatefulWidget {
   final String diaSemana;
-  const AdicionarTreinoTela({super.key, required this.diaSemana});
+  final bool edicao;
+  final TreinoModel? treino;
+  const AdicionarTreinoTela({
+    super.key,
+    required this.diaSemana,
+    this.edicao = false,
+    this.treino,
+  });
 
   @override
   State<AdicionarTreinoTela> createState() => _AdicionarTreinoTelaState();
@@ -34,6 +41,18 @@ class _AdicionarTreinoTelaState extends State<AdicionarTreinoTela> {
     if (pickedFile != null) {
       return pickedFile.path;
     } else {}
+  }
+
+  @override
+  void didChangeDependencies() {
+    if (widget.treino != null) {
+      tituloController.text = widget.treino?.titulo ?? "";
+      descricaoController.text = widget.treino?.descricao ?? "";
+      repeticoesController.text = widget.treino?.repeticoes ?? "";
+      seriesController.text = widget.treino?.series ?? "";
+      pesoController.text = widget.treino?.peso ?? "";
+    }
+    super.didChangeDependencies();
   }
 
   @override
@@ -125,6 +144,7 @@ class _AdicionarTreinoTelaState extends State<AdicionarTreinoTela> {
                   texto: "Salvar treino",
                   funcao: () {
                     TreinoModel treino = TreinoModel(
+                        id: widget.treino?.id,
                         titulo: tituloController.text,
                         descricao: descricaoController.text,
                         repeticoes: repeticoesController.text == ""
@@ -139,7 +159,9 @@ class _AdicionarTreinoTelaState extends State<AdicionarTreinoTela> {
                         diaSemana: widget.diaSemana,
                         imagem: controllerImage);
                     try {
-                      _dbHelper.inserirTreino(treino);
+                      widget.edicao
+                          ? _dbHelper.atualizarTreino(treino)
+                          : _dbHelper.inserirTreino(treino);
                       Navigator.pop(context);
                     } catch (e) {
                       const snackBar = SnackBar(

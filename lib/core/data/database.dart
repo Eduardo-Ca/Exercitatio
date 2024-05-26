@@ -93,4 +93,15 @@ class DatabaseHelper {
       return TreinoModel.fromMap(maps[i]);
     });
   }
+
+  Future<void> atualizarTreino(TreinoModel treino) async {
+    final db = await database;
+    await db.update(
+      'treino',
+      treino.toMap(),
+      where: 'id = ?',
+      whereArgs: [treino.id],
+      conflictAlgorithm: ConflictAlgorithm.replace,
+    );
+  }
 }
